@@ -42,7 +42,7 @@ export default function NavBar() {
             {user && (
                 <div className='flex flex-row'>
                     <Dropdown menu={{ items }} placement="bottomLeft">
-                        <Image width={40} height={40} className='rounded-full cursor-pointer' src={user.picture} alt={user.name} />
+                        <Image width={40} height={40} className='rounded-full cursor-pointer' src={`${user.picture}`} alt={`${user.name}`} />
                     </Dropdown>
 
                 </div>
