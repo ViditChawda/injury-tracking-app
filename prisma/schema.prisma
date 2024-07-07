@@ -18,3 +18,10 @@ model User {
   email String  @unique
   name  String?
 }
+
+model Report {
+  id       Int    @id @default(autoincrement())
+  reporter String
+  date     String
+  time     String
+}
