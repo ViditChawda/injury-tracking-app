@@ -24,7 +24,7 @@ interface BodyPartProps {
     id: number;
     d: string;
     fill: string;
-    onClick: (id: number, name: string, description: string) => void;
+    onClick: (id: number) => void;
     onMouseEnter: (id: number) => void;
     onMouseLeave: () => void;
     isSelected: boolean;
@@ -46,7 +46,7 @@ const BodyPart = ({ id, d, fill, onClick, onMouseEnter, onMouseLeave, isSelected
     return (
         <path
             d={d}
-            id={id}
+            id={id.toString()}
             onClick={handleClick}
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
@@ -64,6 +64,7 @@ export const BodyMap = () => {
     const [lang, setLang] = useState("en");
     const [selectedParts, setSelectedParts] = useState<{ id: number; name: string; description: string }[]>([]); // State for selected body parts
     const [hovered, setHovered] = useState<number | null>(null);
+    const [selectedPartsId, setSelectedPartsId] = useState<number[]>([])
 
     const antBodyParts = useMemo(() => {
         return getBodyPart(lang).filter(({ face }) => face === "ant");
@@ -81,8 +82,10 @@ export const BodyMap = () => {
         const index = selectedParts.findIndex(part => part.id === id);
         if (index !== -1) {
             setSelectedParts(prevSelected => prevSelected.filter(part => part.id !== id)); // Deselect if already selected
+            setSelectedPartsId(prevSelected => prevSelected.filter(part => id !== id))
         } else {
             setSelectedParts(prevSelected => [...prevSelected, { id, name: bodyPart.name, description: "" }]); // Select if not already selected
+            setSelectedPartsId(prevSelected => [...prevSelected, id]); // Select if not already selected
         }
     };
 
@@ -140,7 +143,7 @@ export const BodyMap = () => {
                                 onClick={handleClick}
                                 onMouseEnter={handleMouseEnter}
                                 onMouseLeave={handleMouseLeave}
-                                isSelected={selectedParts.includes(bodyPart.id)}
+                                isSelected={selectedPartsId.includes(bodyPart.id)}
                             />
                         ))}
                     </BodyContainer>
