@@ -7,7 +7,6 @@ import { Menu } from "antd";
 import Footer from '@/components/footer';
 import Hero from '@/components/hero';
 import FeaturesSection from '@/components/features';
-import HumanBody from '@/components/bodymap';
 import { BodyMap } from '@/components/bodyMap/BodyMap';
 
 export default function ProfileClient() {

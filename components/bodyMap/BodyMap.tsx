@@ -61,22 +61,22 @@ const BodyPart = ({ id, d, fill, onClick, onMouseEnter, onMouseLeave, isSelected
 
 
 export const BodyMap = () => {
-    const [lang, setLang] = useState("en");
+    const [lang, setLang] = useState<string>();
     const [selectedParts, setSelectedParts] = useState<{ id: number; name: string; description: string }[]>([]); // State for selected body parts
     const [hovered, setHovered] = useState<number | null>(null);
     const [selectedPartsId, setSelectedPartsId] = useState<number[]>([])
 
     const antBodyParts = useMemo(() => {
-        return getBodyPart(lang).filter(({ face }) => face === "ant");
-    }, [lang]);
+        return getBodyPart().filter(({ face }) => face === "ant");
+    }, []);
 
     const postBodyParts = useMemo(() => {
-        return getBodyPart(lang).filter(({ face }) => face === "post");
-    }, [lang]);
+        return getBodyPart().filter(({ face }) => face === "post");
+    }, []);
 
     const handleClick = (id: number) => {
         console.log(selectedParts)
-        const bodyPart = getBodyPart(lang).find(part => part.id === id);
+        const bodyPart = getBodyPart().find(part => part.id === id);
         if (!bodyPart) return;
 
         const index = selectedParts.findIndex(part => part.id === id);
