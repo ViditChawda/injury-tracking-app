@@ -1,8 +1,9 @@
 import { useCallback, useMemo, useState } from "react";
 import { getBodyPart } from "./bodyParts";
 import style from "./BodyMap.module.css";
+import { Card } from "antd";
 
-const BodyContainer = ({ children }) => (
+const BodyContainer = ({ children }: { children: any }) => (
     <div style={{
         width: "207px",
         height: "500px",
@@ -23,7 +24,7 @@ interface BodyPartProps {
     id: number;
     d: string;
     fill: string;
-    onClick: (id: number) => void;
+    onClick: (id: number, name: string, description: string) => void;
     onMouseEnter: (id: number) => void;
     onMouseLeave: () => void;
     isSelected: boolean;
@@ -31,15 +32,15 @@ interface BodyPartProps {
 
 const BodyPart = ({ id, d, fill, onClick, onMouseEnter, onMouseLeave, isSelected }: BodyPartProps) => {
     const handleClick = () => {
-        onClick(id)
+        onClick(id);
     }
 
     const handleMouseEnter = () => {
-        onMouseEnter(id)
+        onMouseEnter(id);
     }
 
     const handleMouseLeave = () => {
-        onMouseLeave(id)
+        onMouseLeave();
     }
 
     return (
@@ -61,7 +62,7 @@ const BodyPart = ({ id, d, fill, onClick, onMouseEnter, onMouseLeave, isSelected
 
 export const BodyMap = () => {
     const [lang, setLang] = useState("en");
-    const [selectedParts, setSelectedParts] = useState<number[]>([]); // State for selected body parts
+    const [selectedParts, setSelectedParts] = useState<{ id: number; name: string; description: string }[]>([]); // State for selected body parts
     const [hovered, setHovered] = useState<number | null>(null);
 
     const antBodyParts = useMemo(() => {
@@ -73,13 +74,16 @@ export const BodyMap = () => {
     }, [lang]);
 
     const handleClick = (id: number) => {
-        setSelectedParts(prevSelected => {
-            if (prevSelected.includes(id)) {
-                return prevSelected.filter(partId => partId !== id); // Deselect if already selected
-            } else {
-                return [...prevSelected, id]; // Select if not already selected
-            }
-        });
+        console.log(selectedParts)
+        const bodyPart = getBodyPart(lang).find(part => part.id === id);
+        if (!bodyPart) return;
+
+        const index = selectedParts.findIndex(part => part.id === id);
+        if (index !== -1) {
+            setSelectedParts(prevSelected => prevSelected.filter(part => part.id !== id)); // Deselect if already selected
+        } else {
+            setSelectedParts(prevSelected => [...prevSelected, { id, name: bodyPart.name, description: "" }]); // Select if not already selected
+        }
     };
 
     const handleMouseEnter = (id: number) => {
@@ -93,7 +97,7 @@ export const BodyMap = () => {
     };
 
     const getFill = useCallback((bodyPartId: number) => {
-        if (selectedParts.includes(bodyPartId)) {
+        if (selectedParts.some(part => part.id === bodyPartId)) {
             return "#054145"; // Fill color for selected parts
         } else if (hovered === bodyPartId) {
             return "#E0fefe"; // Fill color for hovered parts
@@ -102,14 +106,10 @@ export const BodyMap = () => {
     }, [selectedParts, hovered]);
 
     return (
-        <>
-            <div className={style.header}>
-                {selectedParts.length > 0 ? (
-                    <p>Selected Body Parts: {selectedParts.map(id => getBodyPart(lang).find(part => part.id === id)?.name).join(", ")}</p>
-                ) : (
-                    <p>Click on the body!</p>
-                )}
-            </div>
+        <div className="max-w-7xl mx-auto">
+            <h2 className="text-3xl sm:text-4xl md:text-4xl flex items-center justify-center font-bold leading-tight mt-16 text-[#054145]">
+                Body Map
+            </h2>
             <div className={style.bodies}>
                 <div>
                     <p>Anterior side</p>
@@ -123,7 +123,7 @@ export const BodyMap = () => {
                                 onClick={handleClick}
                                 onMouseEnter={handleMouseEnter}
                                 onMouseLeave={handleMouseLeave}
-                                isSelected={selectedParts.includes(bodyPart.id)}
+                                isSelected={selectedParts.some(part => part.id === bodyPart.id)}
                             />
                         ))}
                     </BodyContainer>
@@ -145,7 +145,24 @@ export const BodyMap = () => {
                         ))}
                     </BodyContainer>
                 </div>
+
             </div>
-        </>
+            <div className="text-black">
+                {selectedParts.length > 0 ? (
+                    <div className="grid grid-cols-3 gap-4 border border-red-500 w-full">
+                        {selectedParts.map((parts, indx) => (
+                            <div key={indx} className="">
+                                <Card title={parts.id} style={{ width: 300 }}>
+                                    <p>{parts.name}</p>
+                                </Card>
+                            </div>
+                        ))
+                        }
+                    </div>
+                ) : (
+                    <p>Click on the body!</p>
+                )}
+            </div>
+        </div>
     );
 };
