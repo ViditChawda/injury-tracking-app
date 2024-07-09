@@ -14,29 +14,32 @@ const resolvers = {
         },
 
     },
-    // Mutation: {
-    // createReport: async (_ : any, { input }) => {
-    //     const { reporter, date, time, injuries } = input;
-    //     try {
-    //         const createdReport = await prisma.report.create({
-    //             data: {
-    //                 reporter: reporter,
-    //                 date: date,
-    //                 time: time,
-    //                 injuries: {
-    //                     create: injuries,
-    //                 },
-    //             },
-    //             include: {
-    //                 injuries: true,
-    //             },
-    //         });
-    //         return createdReport;
-    //     } catch (err) {
-    //         return `${err}`;
-    //     }
-    // },
-    // },
+    Report: {
+        injuries: (report: any) => report.injuries,
+    },
+    Mutation: {
+        createReport: async (_: any, { input }) => {
+            const { reporter, date, time, injuries } = input;
+            try {
+                const createdReport = await prisma.report.create({
+                    data: {
+                        reporter: reporter,
+                        date: date,
+                        time: time,
+                        injuries: {
+                            create: injuries,
+                        },
+                    },
+                    include: {
+                        injuries: true,
+                    },
+                });
+                return createdReport;
+            } catch (err) {
+                return `${err}`;
+            }
+        },
+    },
 };
 
 export default resolvers

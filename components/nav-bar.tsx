@@ -5,11 +5,12 @@ import { MenuProps } from 'antd';
 import Image from 'next/image';
 import { Button, Dropdown, Space } from 'antd';
 import logo from '../public/liefcare_logo 1.png'
+import { useRouter } from 'next/navigation';
 
 
 export default function NavBar() {
     const { user, error, isLoading } = useUser();
-
+    const router = useRouter()
     if (isLoading) return <div>Loading...</div>;
     if (error) return <div>{error.message}</div>;
 
@@ -24,11 +25,11 @@ export default function NavBar() {
 
     return (
         <div className='flex flex-row container h-16 justify-between items-center bg-[#A5D8CC]'>
-            <Image width={100} height={100} src={logo} alt="logo" />
+            <Image className='cursor-pointer' onClick={() => router.push('/')} width={100} height={100} src={logo} alt="logo" />
             {user && <ul className='w-[40%] flex flex-row justify-between'>
                 <li className='hover:text-white text-[#054145]'><a href="#features">Features</a></li>
-                <li className='hover:text-white text-[#054145]'><a href="#reports">Reports</a></li>
-                <li className='hover:text-white text-[#054145]'><a href="#bodymap">Body map</a></li>
+                <li className='hover:text-white text-[#054145]'><a href="/view-reports">Reports</a></li>
+                <li className='hover:text-white text-[#054145]'><a href="/create-injury">Create Report</a></li>
             </ul>}
 
             {!user &&
