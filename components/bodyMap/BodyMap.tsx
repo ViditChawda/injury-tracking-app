@@ -2,6 +2,8 @@ import { useCallback, useMemo, useState } from "react";
 import { getBodyPart } from "./bodyParts";
 import style from "./BodyMap.module.css";
 import { Card } from "antd";
+import TextArea from "antd/es/input/TextArea";
+import { CloseOutlined } from "@ant-design/icons";
 
 const BodyContainer = ({ children }: { children: any }) => (
     <div style={{
@@ -59,7 +61,6 @@ const BodyPart = ({ id, d, fill, onClick, onMouseEnter, onMouseLeave, isSelected
     )
 }
 
-
 export const BodyMap = () => {
     const [lang, setLang] = useState<string>();
     const [selectedParts, setSelectedParts] = useState<{ id: number; name: string; description: string }[]>([]); // State for selected body parts
@@ -99,18 +100,31 @@ export const BodyMap = () => {
         setHovered(null);
     };
 
+    const handleRemove = (id: number) => {
+        setSelectedParts(prevSelected => prevSelected.filter(part => part.id !== id));
+        setSelectedPartsId(prevSelected => prevSelected.filter(partId => partId !== id));
+    }
+
+    const handleDescriptionChange = (id: number, description: string) => {
+        setSelectedParts(prevSelected =>
+            prevSelected.map(part =>
+                part.id === id ? { ...part, description } : part
+            )
+        );
+    }
+
     const getFill = useCallback((bodyPartId: number) => {
         if (selectedParts.some(part => part.id === bodyPartId)) {
             return "#054145"; // Fill color for selected parts
         } else if (hovered === bodyPartId) {
-            return "#E0fefe"; // Fill color for hovered parts
+            return "grey"; // Fill color for hovered parts
         }
         return "#A5D8CC"; // Default fill color
     }, [selectedParts, hovered]);
 
     return (
-        <div className="max-w-7xl mx-auto">
-            <h2 className="text-3xl sm:text-4xl md:text-4xl flex items-center justify-center font-bold leading-tight mt-16 text-[#054145]">
+        <div id="bodymap" className="max-w-7xl mx-auto">
+            <h2 className="text-3xl sm:text-4xl md:text-4xl flex items-center justify-center font-bold leading-tight mt-10 text-[#054145]">
                 Body Map
             </h2>
             <div className={style.bodies}>
@@ -152,18 +166,30 @@ export const BodyMap = () => {
             </div>
             <div className="text-black">
                 {selectedParts.length > 0 ? (
-                    <div className="grid grid-cols-3 gap-4 border border-red-500 w-full">
+                    <div className="grid grid-cols-3 gap-4 items-center justify-center w-full pb-10">
                         {selectedParts.map((parts, indx) => (
-                            <div key={indx} className="">
-                                <Card title={parts.id} style={{ width: 300 }}>
-                                    <p>{parts.name}</p>
+                            <div key={indx} className="relative text-[#054145]">
+                                <Card
+                                    title={`ID : ${parts.id} - ${parts.name}`}
+                                    style={{ width: 300 }}
+                                    className=""
+                                    extra={
+                                        <CloseOutlined onClick={() => handleRemove(parts.id)} />
+                                    }
+                                >
+                                    <TextArea
+                                        rows={2}
+                                        placeholder="Description"
+                                        value={parts.description}
+                                        onChange={(e) => handleDescriptionChange(parts.id, e.target.value)}
+                                    />
                                 </Card>
                             </div>
                         ))
                         }
                     </div>
                 ) : (
-                    <p>Click on the body!</p>
+                    <p className="flex flex-col items-center justify-center text-2xl font-semibold pb-10 text-[#054145]">Click on the body!</p>
                 )}
             </div>
         </div>

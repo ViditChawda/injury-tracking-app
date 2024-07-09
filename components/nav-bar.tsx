@@ -25,12 +25,11 @@ export default function NavBar() {
     return (
         <div className='flex flex-row container h-16 justify-between items-center bg-[#A5D8CC]'>
             <Image width={100} height={100} src={logo} alt="logo" />
-            <ul className='w-[40%] flex flex-row justify-between'>
+            {user && <ul className='w-[40%] flex flex-row justify-between'>
                 <li className='hover:text-white text-[#054145]'><a href="#features">Features</a></li>
                 <li className='hover:text-white text-[#054145]'><a href="#reports">Reports</a></li>
-                <li className='hover:text-white text-[#054145]'><a href="#about">About Us</a></li>
-                <li className='hover:text-white text-[#054145]'><a href="#contact">Contact</a></li>
-            </ul>
+                <li className='hover:text-white text-[#054145]'><a href="#bodymap">Body map</a></li>
+            </ul>}
 
             {!user &&
                 <div>

@@ -20,7 +20,7 @@ export default function ProfileClient() {
       <NavBar />
       <Hero />
       <FeaturesSection />
-      <BodyMap />
+      {user && <BodyMap />}
       <Footer />
     </div>
   );
