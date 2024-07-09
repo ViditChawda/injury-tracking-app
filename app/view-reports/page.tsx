@@ -1,8 +1,12 @@
-import React from 'react'
+"use client"
+import { GET_REPORTS } from '@/graphql/queries'
+import { useQuery } from '@apollo/client'
+import React, { useEffect } from 'react'
 
 function ViewReports() {
+    const { data, loading } = useQuery(GET_REPORTS)
     return (
-        <div>ViewReports</div>
+        <div>{JSON.stringify(data, null, 2)}</div>
     )
 }
 

@@ -5,12 +5,12 @@ import { time } from "console";
 const resolvers = {
     Query: {
         allReports: async (_parents: any, _args: any, context: any) => {
-            return [{
-                id: 1,
-                reporter: "vidit",
-                time: "1;08",
-                date: "7/7/2023"
-            }]
+            const allReports = await prisma.report.findMany({
+                include: {
+                    Injury: true
+                }
+            })
+            return allReports
         },
 
     },
@@ -19,25 +19,29 @@ const resolvers = {
     },
     Mutation: {
         createReport: async (_: any, { input }: { input: any }) => {
-            const { reporter, date, time, injuries } = input;
+            const { reporter_name, report_name, date, time, injuries } = input;
+
+            console.log("[Input]", input)
+
             try {
                 const createdReport = await prisma.report.create({
                     data: {
-                        reporter: reporter,
+                        reporter: reporter_name,
                         date: date,
                         time: time,
-                        // @ts-ignore
-                        injuries: {
-                            create: injuries,
+                        Injury: {
+                            create: injuries
                         },
                     },
                     include: {
-                        injuries: true,
-                    },
+                        Injury: true
+                    }
                 });
+                console.log(createdReport)
                 return createdReport;
             } catch (err) {
-                return `${err}`;
+                console.log("[ERROR_CREATING_REPORT]", err)
+                return null
             }
         },
     },

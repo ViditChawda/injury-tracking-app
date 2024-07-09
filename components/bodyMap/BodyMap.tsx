@@ -4,6 +4,10 @@ import style from "./BodyMap.module.css";
 import { Card } from "antd";
 import TextArea from "antd/es/input/TextArea";
 import { CloseOutlined } from "@ant-design/icons";
+import { useUser } from "@auth0/nextjs-auth0/client";
+import { useMutation } from "@apollo/client";
+import { CREATE_REPORT } from "@/graphql/mutations";
+import { useRouter } from "next/navigation";
 
 const BodyContainer = ({ children }: { children: any }) => (
     <div style={{
@@ -62,10 +66,13 @@ const BodyPart = ({ id, d, fill, onClick, onMouseEnter, onMouseLeave, isSelected
 }
 
 export const BodyMap = () => {
-    const [lang, setLang] = useState<string>();
+    const { user, error, isLoading } = useUser();
     const [selectedParts, setSelectedParts] = useState<{ id: number; name: string; description: string }[]>([]); // State for selected body parts
     const [hovered, setHovered] = useState<number | null>(null);
     const [selectedPartsId, setSelectedPartsId] = useState<number[]>([])
+    const router = useRouter()
+    const [createReport, { loading, data }] = useMutation(CREATE_REPORT)
+
 
     const antBodyParts = useMemo(() => {
         return getBodyPart().filter(({ face }) => face === "ant");
@@ -76,7 +83,6 @@ export const BodyMap = () => {
     }, []);
 
     const handleClick = (id: number) => {
-        console.log(selectedParts)
         const bodyPart = getBodyPart().find(part => part.id === id);
         if (!bodyPart) return;
 
@@ -121,6 +127,34 @@ export const BodyMap = () => {
         }
         return "#A5D8CC"; // Default fill color
     }, [selectedParts, hovered]);
+
+    const onSubmit = async () => {
+        try {
+            if (!user) {
+                return;
+            }
+            const payload = {
+                reporter_name: user?.name ?? user.email,
+                report_name: "Test report",
+                date: new Date().toString(),
+                time: new Date().toLocaleTimeString(),
+                injuries: selectedParts.map(({ id, name, ...rest }) => ({
+                    body_part_id: id.toString(),
+                    body_part: name,
+                    ...rest
+                })),
+            }
+            createReport({
+                variables: {
+                    input: payload
+                }
+            })
+        } catch (err) {
+            console.log(error)
+        } finally {
+            router.push('/view-reports')
+        }
+    }
 
     return (
         <div id="bodymap" className="max-w-7xl mx-auto">
@@ -192,6 +226,10 @@ export const BodyMap = () => {
                     <p className="flex flex-col items-center justify-center text-2xl font-semibold pb-10 text-[#054145]">Click on the body!</p>
                 )}
             </div>
+            <button onClick={() => {
+
+                onSubmit()
+            }} disabled={loading}>submit</button>
         </div>
     );
 };

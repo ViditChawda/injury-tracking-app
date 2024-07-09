@@ -5,7 +5,7 @@ export const GET_REPORTS = gql`
     allReports {
       id
       date
-      injuries {
+      Injury {
         body_part
         description
       }

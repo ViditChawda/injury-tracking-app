@@ -5,10 +5,10 @@ export const CREATE_REPORT = gql`
     createReport(input: $input) {
       date
       time
-      reporter
-      injuries {
-        body_part
-        description
+      Injury {
+       description
+       body_part
+       body_part_id
       }
     }
   }

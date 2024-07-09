@@ -6,11 +6,13 @@ export const typeDefs = gql`
     reporter: String
     date: String
     time:String
-    injuries:[Injury]
+    injuries :[Injury]
+    Injury :[Injury]
   },
   type Injury{
     injury_id:ID!
     report:Report
+    body_part_id : String!
     description:String
     body_part:String
   }
@@ -34,23 +36,24 @@ export const typeDefs = gql`
     reporter: String!
     noOfReports: Int!
   }
-  
   type DateCount {
     date: String!
     noOfReports: Int!
   }
-  type BodyPartCount{
-    body_part:String!,
+  type BodyPartCount {
+    body_part:String!
     noOfReports:Int!
   }
   
   input InjuryCreateInput {
     description: String!
     body_part: String!
+    body_part_id : String!
   }
   
   input ReportCreateInput {
-    reporter: String!
+    reporter_name: String!
+    report_name: String!
     date: String!
     time:String!
     injuries: [InjuryCreateInput!]

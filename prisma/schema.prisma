@@ -24,13 +24,14 @@ model Report {
   reporter String
   date     String
   time     String
-  Injury   Injury[]
+  injuries Injury[]
 }
 
 model Injury {
-  injury_id   Int    @id @default(autoincrement())
-  report      Report @relation(fields: [report_id], references: [id])
-  report_id   Int
-  body_part   String
-  description String
+  injury_id    Int    @id @default(autoincrement())
+  report       Report @relation(fields: [report_id], references: [id])
+  report_id    Int
+  body_part_id String
+  body_part    String
+  description  String
 }
