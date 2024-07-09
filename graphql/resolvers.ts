@@ -1,12 +1,10 @@
 import prisma from "@/prisma/db";
-import { time } from "console";
-
 
 const resolvers = {
     Query: {
         allReports: async (_parents: any, _args: any, context: any) => {
             const allReports = await prisma.report.findMany({
-                include: {
+                select: {
                     Injury: true
                 }
             })
@@ -33,7 +31,7 @@ const resolvers = {
                             create: injuries
                         },
                     },
-                    include: {
+                    select: {
                         Injury: true
                     }
                 });
