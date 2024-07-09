@@ -1,3 +1,4 @@
+
 import { gql } from "@apollo/client";
 
 export const CREATE_REPORT = gql`
@@ -5,11 +6,11 @@ export const CREATE_REPORT = gql`
     createReport(input: $input) {
       date
       time
-      Injury {
+      injuries {
        description
        body_part
        body_part_id
-      }
-    }
-  }
+      }
+    }
+  }
 `;

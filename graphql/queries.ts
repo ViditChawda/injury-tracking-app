@@ -5,12 +5,28 @@ export const GET_REPORTS = gql`
     allReports {
       id
       date
-      Injury {
-        body_part
-        description
-      }
       reporter
       time
+      Injury {
+        body_part
+        body_part_id
+        description
+      }
+    }
+  } 
+`;
+
+export const GET_REPORT_BY_ID = gql`
+query Report($reportId: ID!) {
+  report(id: $reportId) {
+    id
+    reporter
+    date
+    time
+    Injury {
+      body_part
+      body_part_id
+      description
     }
   }
-`;
+}`

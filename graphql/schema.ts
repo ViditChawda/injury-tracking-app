@@ -7,7 +7,6 @@ export const typeDefs = gql`
     date: String
     time:String
     injuries :[Injury]
-    Injury :[Injury]
   },
   type Injury{
     injury_id:ID!
@@ -60,6 +59,6 @@ export const typeDefs = gql`
   }
   
   type Mutation {
-    createReport(input: ReportCreateInput!): Report
-  }
+    createReport(input: ReportCreateInput!): Report
+  }
 `;

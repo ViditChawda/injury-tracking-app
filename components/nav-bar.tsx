@@ -11,7 +11,6 @@ import { useRouter } from 'next/navigation';
 export default function NavBar() {
     const { user, error, isLoading } = useUser();
     const router = useRouter()
-    if (isLoading) return <div>Loading...</div>;
     if (error) return <div>{error.message}</div>;
 
     const items: MenuProps['items'] = [
@@ -26,13 +25,13 @@ export default function NavBar() {
     return (
         <div className='flex flex-row container h-16 justify-between items-center bg-[#A5D8CC]'>
             <Image className='cursor-pointer' onClick={() => router.push('/')} width={100} height={100} src={logo} alt="logo" />
-            {user && <ul className='w-[40%] flex flex-row justify-between'>
+            <ul className='w-[40%] flex flex-row justify-between'>
                 <li className='hover:text-white text-[#054145]'><a href="#features">Features</a></li>
                 <li className='hover:text-white text-[#054145]'><a href="/view-reports">Reports</a></li>
                 <li className='hover:text-white text-[#054145]'><a href="/create-injury">Create Report</a></li>
-            </ul>}
+            </ul>
 
-            {!user &&
+            {(isLoading && !user) &&
                 <div>
                     <button className="bg-[#E0fefe] text-[#054145] py-2 px-6 rounded-md shadow-md hover:bg-[#054145] hover:text-white transition duration-300 ease-in-out">
                         <a href="/api/auth/login">Login / Sign Up</a>

@@ -11,8 +11,6 @@ import { BodyMap } from '@/components/bodyMap/BodyMap';
 
 export default function ProfileClient() {
   const { user, error, isLoading } = useUser();
-
-  if (isLoading) return <div>Loading...</div>;
   if (error) return <div>{error.message}</div>;
 
   return (
