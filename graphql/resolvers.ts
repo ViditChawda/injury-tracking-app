@@ -18,7 +18,7 @@ const resolvers = {
         injuries: (report: any) => report.injuries,
     },
     Mutation: {
-        createReport: async (_: any, { input }) => {
+        createReport: async (_: any, { input }: { input: any }) => {
             const { reporter, date, time, injuries } = input;
             try {
                 const createdReport = await prisma.report.create({
@@ -26,6 +26,7 @@ const resolvers = {
                         reporter: reporter,
                         date: date,
                         time: time,
+                        // @ts-ignore
                         injuries: {
                             create: injuries,
                         },
