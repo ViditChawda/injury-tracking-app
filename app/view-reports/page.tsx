@@ -68,7 +68,6 @@ function ViewReports() {
             title: 'Report Date',
             dataIndex: 'date',
             key: 'date',
-            sorter: (a: any, b: any) => new Date(a.date) - new Date(b.date),
             render: (date: any) => format(new Date(date), 'MM/dd/yyyy'),
         },
         {
