@@ -1,6 +1,5 @@
 import { useCallback, useMemo, useState } from "react";
 import { getBodyPart } from "./bodyParts";
-import style from "./BodyMap.module.css";
 import { Card, Input, DatePicker, TimePicker } from "antd";
 import TextArea from "antd/es/input/TextArea";
 import { CloseOutlined } from "@ant-design/icons";
@@ -204,7 +203,7 @@ export const BodyMap = () => {
                         />
                     </div>
                 </div>
-                <div className={style.bodies}>
+                <div className="flex flex-row">
                     <div>
                         <p>Anterior side</p>
                         <BodyContainer>
