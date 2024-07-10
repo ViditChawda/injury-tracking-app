@@ -3,7 +3,8 @@ import { gql } from "@apollo/client";
 export const typeDefs = gql`
   type Report {
     id: ID!
-    reporter: String
+    report_name : String
+    reporter_name: String
     date: String
     time:String
     injuries :[Injury]
@@ -21,29 +22,6 @@ export const typeDefs = gql`
   type Query{
     allReports:[Report]
   }
-  type Query {
-    analyticsData: AnalyticsData!
-  }
-  
-  type AnalyticsData {
-    reporterData: [ReporterCount]!
-    dateData: [DateCount]!
-    injuryData:[BodyPartCount]!
-  }
-  
-  type ReporterCount {
-    reporter: String!
-    noOfReports: Int!
-  }
-  type DateCount {
-    date: String!
-    noOfReports: Int!
-  }
-  type BodyPartCount {
-    body_part:String!
-    noOfReports:Int!
-  }
-  
   input InjuryCreateInput {
     description: String!
     body_part: String!
@@ -59,6 +37,6 @@ export const typeDefs = gql`
   }
   
   type Mutation {
-    createReport(input: ReportCreateInput!): Report
-  }
+    createReport(input: ReportCreateInput!):Report
+}
 `;

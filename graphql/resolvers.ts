@@ -3,6 +3,15 @@ import prisma from "@/prisma/db";
 
 const resolvers = {
   Query: {
+    report: async (_: any, { id }: { id: any }) => {
+      const report = await prisma.report.findUnique({
+        where: { id: Number(id) },
+        include: {
+          injuries: true,
+        },
+      });
+      return report;
+    },
     allReports: async (_parents: any, _args: any, context: any) => {
       const allReports = await prisma.report.findMany({
         include: {
@@ -24,7 +33,8 @@ const resolvers = {
       try {
         const createdReport = await prisma.report.create({
           data: {
-            reporter: reporter_name,
+            report_name: report_name,
+            reporter_name: reporter_name,
             date: date,
             time: time,
             injuries: {
@@ -45,4 +55,4 @@ const resolvers = {
   },
 };
 
-export default resolvers;
+export default resolvers;

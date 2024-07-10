@@ -4,7 +4,7 @@ import React from 'react';
 const Hero = () => {
     const { user, error, isLoading } = useUser();
     return (
-        <section className="hero bg-[#A5D8CC] text-white py-20 md:pt-40 min-h-[70vh]">
+        <section className="hero container bg-[#A5D8CC] text-white py-20 md:pt-40 min-h-[70vh]">
             <div className="max-w-7xl mx-auto">
                 <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold leading-tight mb-4 text-[#054145]">
                     Streamline Injury Tracking with <br /> <span>Vidit Chawda</span>

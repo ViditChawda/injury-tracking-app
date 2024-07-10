@@ -23,15 +23,15 @@ export default function NavBar() {
     ];
 
     return (
-        <div className='flex flex-row container h-16 justify-between items-center bg-[#A5D8CC]'>
-            <Image className='cursor-pointer' onClick={() => router.push('/')} width={100} height={100} src={logo} alt="logo" />
-            <ul className='w-[40%] flex flex-row justify-between'>
-                <li className='hover:text-white text-[#054145]'><a href="#features">Features</a></li>
-                <li className='hover:text-white text-[#054145]'><a href="/view-reports">Reports</a></li>
-                <li className='hover:text-white text-[#054145]'><a href="/create-injury">Create Report</a></li>
-            </ul>
-
-            {(isLoading && !user) &&
+        <div className='flex flex-row container h-16 justify-between border-b-[1px] border-[#054145] items-center bg-[#A5D8CC]'>
+            <div className='flex flex-row md:gap-16 gap-4'>
+                <Image className='cursor-pointer' onClick={() => router.push('/')} width={100} height={100} src={logo} alt="logo" />
+                <ul className='items-center flex flex-row justify-start md:gap-12 gap-2'>
+                    <li className='hover:text-white text-[#054145] cursor-pointer'><a onClick={() => { router.push('/view-reports') }}>Reports</a></li>
+                    <li className='hover:text-white text-[#054145] cursor-pointer'><a onClick={() => { router.push('/create-injury') }}>Create Report</a></li>
+                </ul>
+            </div>
+            {(!user) &&
                 <div>
                     <button className="bg-[#E0fefe] text-[#054145] py-2 px-6 rounded-md shadow-md hover:bg-[#054145] hover:text-white transition duration-300 ease-in-out">
                         <a href="/api/auth/login">Login / Sign Up</a>

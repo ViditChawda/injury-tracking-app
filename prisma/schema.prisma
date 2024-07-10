@@ -20,11 +20,12 @@ model User {
 }
 
 model Report {
-  id       Int      @id @default(autoincrement())
-  reporter String
-  date     String
-  time     String
-  injuries Injury[]
+  id            Int      @id @default(autoincrement())
+  report_name   String
+  reporter_name String
+  date          String
+  time          String
+  injuries      Injury[]
 }
 
 model Injury {

@@ -6,11 +6,13 @@ export const CREATE_REPORT = gql`
     createReport(input: $input) {
       date
       time
+      reporter_name 
+      report_name
       injuries {
        description
        body_part
        body_part_id
-      }
-    }
-  }
+    }
+}
+}
 `;

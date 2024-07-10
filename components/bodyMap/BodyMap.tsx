@@ -1,13 +1,18 @@
 import { useCallback, useMemo, useState } from "react";
 import { getBodyPart } from "./bodyParts";
 import style from "./BodyMap.module.css";
-import { Card } from "antd";
+import { Card, Input, DatePicker, TimePicker } from "antd";
 import TextArea from "antd/es/input/TextArea";
 import { CloseOutlined } from "@ant-design/icons";
 import { useUser } from "@auth0/nextjs-auth0/client";
 import { useMutation } from "@apollo/client";
 import { CREATE_REPORT } from "@/graphql/mutations";
 import { useRouter } from "next/navigation";
+import { LoaderCircle } from "lucide-react";
+import dayjs from "dayjs";
+import customParseFormat from 'dayjs/plugin/customParseFormat';
+
+dayjs.extend(customParseFormat);
 
 const BodyContainer = ({ children }: { children: any }) => (
     <div style={{
@@ -69,10 +74,13 @@ export const BodyMap = () => {
     const { user, error, isLoading } = useUser();
     const [selectedParts, setSelectedParts] = useState<{ id: number; name: string; description: string }[]>([]); // State for selected body parts
     const [hovered, setHovered] = useState<number | null>(null);
-    const [selectedPartsId, setSelectedPartsId] = useState<number[]>([])
-    const router = useRouter()
-    const [createReport, { loading, data }] = useMutation(CREATE_REPORT)
-
+    const [selectedPartsId, setSelectedPartsId] = useState<number[]>([]);
+    const [reportName, setReportName] = useState("");
+    const [reporterName, setReporterName] = useState(user?.name ?? user?.email ?? "");
+    const [reportDate, setReportDate] = useState(dayjs());
+    const [reportTime, setReportTime] = useState(dayjs());
+    const router = useRouter();
+    const [createReport, { loading, data }] = useMutation(CREATE_REPORT);
 
     const antBodyParts = useMemo(() => {
         return getBodyPart().filter(({ face }) => face === "ant");
@@ -134,73 +142,109 @@ export const BodyMap = () => {
                 return;
             }
             const payload = {
-                reporter_name: user?.name ?? user.email,
-                report_name: "Test report",
-                date: new Date().toString(),
-                time: new Date().toLocaleTimeString(),
+                reporter_name: reporterName,
+                report_name: reportName,
+                date: reportDate.toISOString(),
+                time: reportTime.format("HH:mm:ss"),
                 injuries: selectedParts.map(({ id, name, ...rest }) => ({
                     body_part_id: id.toString(),
                     body_part: name,
                     ...rest
                 })),
             }
-            createReport({
+            await createReport({
                 variables: {
                     input: payload
                 }
-            })
+            });
+            router.push('/view-reports')
         } catch (err) {
             console.log(error)
-        } finally {
-            router.push('/view-reports')
         }
     }
 
     return (
         <div id="bodymap" className="max-w-7xl mx-auto">
             <h2 className="text-3xl sm:text-4xl md:text-4xl flex items-center justify-center font-bold leading-tight mt-10 text-[#054145]">
-                Body Map
+                Create Report
             </h2>
-            <div className={style.bodies}>
-                <div>
-                    <p>Anterior side</p>
-                    <BodyContainer>
-                        {antBodyParts.map((bodyPart, index) => (
-                            <BodyPart
-                                key={index}
-                                id={bodyPart.id}
-                                d={bodyPart.d}
-                                fill={getFill(bodyPart.id)}
-                                onClick={handleClick}
-                                onMouseEnter={handleMouseEnter}
-                                onMouseLeave={handleMouseLeave}
-                                isSelected={selectedParts.some(part => part.id === bodyPart.id)}
-                            />
-                        ))}
-                    </BodyContainer>
+            <div className="flex md:flex-row flex-col md:mt-0 mt-6 container md:px-0">
+                <div className="flex flex-col gap-2 items-start justify-center">
+                    <div className="w-full">
+                        <label>Report Name : </label>
+                        <Input
+                            className="mb-4 w-full mt-2"
+                            placeholder="Report Name"
+                            value={reportName}
+                            onChange={(e) => setReportName(e.target.value)}
+                        />
+                    </div>
+                    <div className="w-full">
+                        <label>Reporter Name : </label>
+                        <Input
+                            className="mb-4 w-full mt-2"
+                            placeholder="Reporter Name"
+                            value={reporterName}
+                        />
+                    </div>
+                    <div className="w-full">
+                        <label>Report Date : </label>
+                        <DatePicker
+                            className="mb-4 w-full mt-2"
+                            value={reportDate}
+                            onChange={(date) => setReportDate(date ?? dayjs())}
+                        />
+                    </div>
+                    <div className="w-full">
+                        <label>Report Time : </label>
+                        <TimePicker
+                            className="mb-4 w-full mt-2"
+                            value={reportTime}
+                            onChange={(time) => setReportTime(time ?? dayjs())}
+                        />
+                    </div>
                 </div>
-                <div>
-                    <p>Posterior side</p>
-                    <BodyContainer>
-                        {postBodyParts.map((bodyPart, index) => (
-                            <BodyPart
-                                key={index}
-                                id={bodyPart.id}
-                                d={bodyPart.d}
-                                fill={getFill(bodyPart.id)}
-                                onClick={handleClick}
-                                onMouseEnter={handleMouseEnter}
-                                onMouseLeave={handleMouseLeave}
-                                isSelected={selectedPartsId.includes(bodyPart.id)}
-                            />
-                        ))}
-                    </BodyContainer>
+                <div className={style.bodies}>
+                    <div>
+                        <p>Anterior side</p>
+                        <BodyContainer>
+                            {antBodyParts.map((bodyPart, index) => (
+                                <BodyPart
+                                    key={index}
+                                    id={bodyPart.id}
+                                    d={bodyPart.d}
+                                    fill={getFill(bodyPart.id)}
+                                    onClick={handleClick}
+                                    onMouseEnter={handleMouseEnter}
+                                    onMouseLeave={handleMouseLeave}
+                                    isSelected={selectedParts.some(part => part.id === bodyPart.id)}
+                                />
+                            ))}
+                        </BodyContainer>
+                    </div>
+                    <div>
+                        <p>Posterior side</p>
+                        <BodyContainer>
+                            {postBodyParts.map((bodyPart, index) => (
+                                <BodyPart
+                                    key={index}
+                                    id={bodyPart.id}
+                                    d={bodyPart.d}
+                                    fill={getFill(bodyPart.id)}
+                                    onClick={handleClick}
+                                    onMouseEnter={handleMouseEnter}
+                                    onMouseLeave={handleMouseLeave}
+                                    isSelected={selectedPartsId.includes(bodyPart.id)}
+                                />
+                            ))}
+                        </BodyContainer>
+                    </div>
                 </div>
-
             </div>
+
             <div className="text-black">
                 {selectedParts.length > 0 ? (
-                    <div className="grid grid-cols-3 gap-4 items-center justify-center w-full pb-10">
+                    <div className="md:grid md:grid-cols-3 flex flex-col gap-4 items-center justify-center w-full pb-10">
                         {selectedParts.map((parts, indx) => (
                             <div key={indx} className="relative text-[#054145]">
                                 <Card
@@ -226,10 +270,20 @@ export const BodyMap = () => {
                     <p className="flex flex-col items-center justify-center text-2xl font-semibold pb-10 text-[#054145]">Click on the body!</p>
                 )}
             </div>
-            <button onClick={() => {
+            <div className="flex flex-col items-center justify-center py-10 px-auto">
+                {(selectedParts.length > 0) &&
+                    <button onClick={onSubmit}
+                        className="bg-[#054145] text-white py-2 px-10 rounded-md shadow-md hover:bg-[#E0fefe] hover:text-black"
+                    >
+                        {loading ?
+                            <div className="flex flex-row gap-2"><LoaderCircle className="animate-spin" /> Submit</div>
+                            :
+                            <div>Submit</div>
+                        }
+                    </button>
+                }
+            </div>
 
-                onSubmit()
-            }} disabled={loading}>submit</button>
         </div>
     );
 };
