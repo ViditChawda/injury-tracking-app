@@ -59,8 +59,14 @@ function ViewReports() {
             render: (id: any) => <a>{id}</a>,
         },
         {
-            title: 'Reporter Email',
-            dataIndex: 'reporter',
+            title: 'Report Name',
+            dataIndex: 'report_name',
+            key: 'reporter',
+            sorter: (a: any, b: any) => a.reporter.localeCompare(b.reporter),
+        },
+        {
+            title: 'Reporter Name',
+            dataIndex: 'reporter_name',
             key: 'reporter',
             sorter: (a: any, b: any) => a.reporter.localeCompare(b.reporter),
         },

@@ -9,7 +9,7 @@
     "lint": "next lint"
   },
   "prisma": {
-    "seed": "npx prisma generate deploy && next build"
+    "seed": "npx prisma migrate deploy && next build"
   },
   "dependencies": {
     "@apollo/client": "^3.10.8",
