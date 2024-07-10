@@ -1,6 +1,5 @@
 'use client'
 import { useCallback, useEffect, useMemo, useState } from "react";
-import style from '../../../components/bodyMap/BodyMap.module.css'
 import { Card } from "antd";
 import TextArea from "antd/es/input/TextArea";
 import { CloseOutlined } from "@ant-design/icons";
@@ -121,7 +120,7 @@ const Page = ({ params }: { params: any }) => {
                 <h2 className="text-3xl sm:text-4xl md:text-4xl flex items-center justify-center font-bold leading-tight mt-10 text-[#054145]">
                     Body Map Report -  {id}
                 </h2>
-                <div className={style.bodies}>
+                <div className="flex flex-row">
                     <div>
                         <p>Anterior side</p>
                         <BodyContainer>
