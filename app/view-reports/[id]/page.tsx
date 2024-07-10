@@ -120,8 +120,8 @@ const Page = ({ params }: { params: any }) => {
                 <h2 className="text-3xl sm:text-4xl md:text-4xl flex items-center justify-center font-bold leading-tight mt-10 text-[#054145]">
                     Body Map Report -  {id}
                 </h2>
-                <div className="flex flex-row">
-                    <div>
+                <div className="flex flex-col md:flex-row w-full items-center justify-center gap-20 mt-20">
+                    <div className="flex flex-col items-center justify-center">
                         <p>Anterior side</p>
                         <BodyContainer>
                             {antBodyParts.map((bodyPart, index) => (
@@ -136,7 +136,7 @@ const Page = ({ params }: { params: any }) => {
                             ))}
                         </BodyContainer>
                     </div>
-                    <div>
+                    <div className="flex flex-col items-center justify-center">
                         <p>Posterior side</p>
                         <BodyContainer>
                             {postBodyParts.map((bodyPart, index) => (

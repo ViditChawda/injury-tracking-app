@@ -203,8 +203,8 @@ export const BodyMap = () => {
                         />
                     </div>
                 </div>
-                <div className="flex flex-row">
-                    <div>
+                <div className="flex flex-col md:flex-row w-full items-center justify-center gap-20 mt-20">
+                    <div className="flex flex-col items-center justify-center">
                         <p>Anterior side</p>
                         <BodyContainer>
                             {antBodyParts.map((bodyPart, index) => (
@@ -221,7 +221,7 @@ export const BodyMap = () => {
                             ))}
                         </BodyContainer>
                     </div>
-                    <div>
+                    <div className="flex flex-col items-center justify-center">
                         <p>Posterior side</p>
                         <BodyContainer>
                             {postBodyParts.map((bodyPart, index) => (
