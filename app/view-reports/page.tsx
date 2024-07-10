@@ -1,6 +1,6 @@
 'use client'
-import NavBar from '@/components/nav-bar'
-import { GET_REPORTS } from '@/graphql/queries'
+import NavBar from '../../components/nav-bar'
+import { GET_REPORTS } from '../../graphql/queries'
 import { useQuery } from '@apollo/client'
 import { Card, Input, DatePicker, Table } from 'antd'
 import { format } from 'date-fns'

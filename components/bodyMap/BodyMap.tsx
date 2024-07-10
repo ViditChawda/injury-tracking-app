@@ -6,7 +6,7 @@ import TextArea from "antd/es/input/TextArea";
 import { CloseOutlined } from "@ant-design/icons";
 import { useUser } from "@auth0/nextjs-auth0/client";
 import { useMutation } from "@apollo/client";
-import { CREATE_REPORT } from "@/graphql/mutations";
+import { CREATE_REPORT } from "../../graphql/mutations";
 import { useRouter } from "next/navigation";
 import { LoaderCircle } from "lucide-react";
 import dayjs from "dayjs";

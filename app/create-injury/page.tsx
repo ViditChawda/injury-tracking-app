@@ -1,6 +1,6 @@
 'use client'
-import { BodyMap } from '@/components/bodyMap/BodyMap'
-import NavBar from '@/components/nav-bar'
+import { BodyMap } from '../../components/bodyMap/BodyMap'
+import NavBar from '../../components/nav-bar'
 import React from 'react'
 
 function BodyMAp1() {

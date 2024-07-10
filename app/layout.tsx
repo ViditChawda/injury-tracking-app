@@ -2,7 +2,7 @@
 import { UserProvider } from '@auth0/nextjs-auth0/client';
 import * as React from "react";
 import './globals.css'
-import NavBar from '@/components/nav-bar';
+import NavBar from '../components/nav-bar';
 import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client';
 import Provider from './_provider';
 export const metadata = {

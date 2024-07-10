@@ -5,9 +5,9 @@ import { Card } from "antd";
 import TextArea from "antd/es/input/TextArea";
 import { CloseOutlined } from "@ant-design/icons";
 import { useQuery } from "@apollo/client";
-import { GET_REPORT_BY_ID } from "@/graphql/queries";
-import { getBodyPart } from "@/components/bodyMap/bodyParts";
-import NavBar from "@/components/nav-bar";
+import { GET_REPORT_BY_ID } from "../../../graphql/queries";
+import { getBodyPart } from "../../../components/bodyMap/bodyParts";
+import NavBar from "../../../components/nav-bar";
 
 const BodyContainer = ({ children }: { children: any }) => (
     <div style={{
