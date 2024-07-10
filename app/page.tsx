@@ -1,13 +1,10 @@
 'use client';
 
-import NavBar from '@/components/nav-bar';
 import { useUser } from '@auth0/nextjs-auth0/client';
-import Image from 'next/image';
-import { Menu } from "antd";
-import Footer from '@/components/footer';
-import Hero from '@/components/hero';
-import FeaturesSection from '@/components/features';
-import { BodyMap } from '@/components/bodyMap/BodyMap';
+import NavBar from '../components/nav-bar';
+import Hero from '../components/hero';
+import FeaturesSection from '../components/features';
+import Footer from '../components/footer';
 
 export default function ProfileClient() {
   const { user, error, isLoading } = useUser();
