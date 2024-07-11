@@ -185,6 +185,7 @@ export const BodyMap = () => {
                             className="mb-4 w-full mt-2"
                             placeholder="Reporter Name"
                             value={reporterName}
+                            onChange={(e) => setReporterName(e.target.value)}
                         />
                     </div>
                     <div className="w-full">
