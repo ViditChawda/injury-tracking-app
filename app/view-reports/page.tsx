@@ -129,7 +129,15 @@ function ViewReports() {
                             <p><strong>Reporter Name:</strong> {report.reporter_name}</p>
                             <p><strong>Report Date:</strong> {format(new Date(report.date), 'MM/dd/yyyy')}</p>
                             <div className='text-blue-500 mt-2'>
-                                <a onClick={() => handleDelete(report.id)}>Delete</a>
+                                <Popconfirm
+                                    placement="topLeft"
+                                    title={'Are you sure to delete this report?'}
+                                    description={'Delete the report'}
+                                    okText="Yes"
+                                    cancelText="No"
+                                    onConfirm={() => handleDelete(report.id)}
+                                >
+                                    <a >Delete</a></Popconfirm>
                                 <a onClick={() => { router.push(`/view-reports/${report.id}`) }} className='ml-6'>View/Edit</a>
                             </div>
                         </Card>
