@@ -1,6 +1,6 @@
 'use client'
 import NavBar from '../../components/nav-bar'
-import { GET_REPORT_BY_ID, GET_REPORTS } from '../../graphql/queries'
+import { GET_REPORTS } from '../../graphql/queries'
 import { useMutation, useQuery } from '@apollo/client'
 import { Card, Input, DatePicker, Table } from 'antd'
 import { format } from 'date-fns'
@@ -18,7 +18,6 @@ function ViewReports() {
     const [isClient, setIsClient] = useState(false);
     const [searchText, setSearchText] = useState('');
     const [filteredReports, setFilteredReports] = useState([]);
-
 
     const [deleteReport, { error: mutationError }] = useMutation(DELETE_REPORT);
 
@@ -45,7 +44,7 @@ function ViewReports() {
     const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value.toLowerCase();
         const filtered = data.allReports.filter((report: any) =>
-            report.reporter.toLowerCase().includes(value)
+            report.report_name.toLowerCase().includes(value)
         );
         setSearchText(value);
         setFilteredReports(filtered);
@@ -75,20 +74,25 @@ function ViewReports() {
         {
             title: 'Report Name',
             dataIndex: 'report_name',
-            key: 'reporter',
-            sorter: (a: any, b: any) => a.reporter.localeCompare(b.reporter),
+            key: 'report_name',
+            sorter: (a: any, b: any) => (a.report_name || '').localeCompare(b.report_name || ''),
         },
         {
             title: 'Reporter Name',
             dataIndex: 'reporter_name',
-            key: 'reporter',
-            sorter: (a: any, b: any) => a.reporter.localeCompare(b.reporter),
+            key: 'reporter_name',
+            sorter: (a: any, b: any) => (a.reporter_name || '').localeCompare(b.reporter_name || ''),
         },
         {
             title: 'Report Date',
             dataIndex: 'date',
             key: 'date',
             render: (date: any) => format(new Date(date), 'MM/dd/yyyy'),
+        },
+        {
+            title: 'Report Date',
+            dataIndex: 'time',
+            key: 'time',
         },
         {
             title: 'Action',
@@ -113,11 +117,12 @@ function ViewReports() {
                 <div className="grid grid-cols-1 gap-4 container">
                     {filteredReports.map((report: any) => (
                         <Card key={report.id} title={`ID: ${report.id}`}>
-                            <p><strong>Reporter Email:</strong> {report.reporter}</p>
+                            <p><strong>Reporter Name:</strong> {report.report_name}</p>
+                            <p><strong>Reporter Name:</strong> {report.reporter_name}</p>
                             <p><strong>Report Date:</strong> {format(new Date(report.date), 'MM/dd/yyyy')}</p>
                             <div className='text-blue-500 mt-2'>
-                                <a>Delete</a>
-                                <a onClick={() => { router.push(`/view-reports/${report.id}`) }} className='ml-6'>View</a>
+                                <a onClick={() => handleDelete(report.id)}>Delete</a>
+                                <a onClick={() => { router.push(`/view-reports/${report.id}`) }} className='ml-6'>View/Edit</a>
                             </div>
                         </Card>
                     ))}
@@ -142,14 +147,18 @@ function ViewReports() {
                 <h2 className="text-3xl sm:text-4xl md:text-4xl flex items-center justify-center font-bold leading-tight mt-10 text-[#054145]">
                     Reports
                 </h2>
-                <div className="flex justify-between my-4">
-                    <Input
-                        placeholder="Search by name"
-                        value={searchText}
-                        onChange={handleSearch}
-                        prefix={<SearchOutlined />}
-                    />
-                    <RangePicker onChange={handleDateFilter} />
+                <div className="flex md:flex-row flex-col justify-center container md:px-0 md:mt-20 md:justify-between my-4 w-full gap-6">
+                    <div className='md:w-1/2'>
+                        <Input
+                            placeholder="Search by name"
+                            value={searchText}
+                            onChange={handleSearch}
+                            prefix={<SearchOutlined />}
+                        />
+                    </div>
+                    <div className=''>
+                        <RangePicker onChange={handleDateFilter} />
+                    </div>
                 </div>
                 {data ? (
                     renderTableOrCards()
