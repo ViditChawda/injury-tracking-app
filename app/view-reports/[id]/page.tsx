@@ -1,12 +1,17 @@
 'use client'
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Card } from "antd";
+import { Card, Input, DatePicker, TimePicker } from "antd";
 import TextArea from "antd/es/input/TextArea";
 import { CloseOutlined } from "@ant-design/icons";
 import { useQuery } from "@apollo/client";
 import { GET_REPORT_BY_ID } from "../../../graphql/queries";
 import { getBodyPart } from "../../../components/bodyMap/bodyParts";
 import NavBar from "../../../components/nav-bar";
+import { useUser } from "@auth0/nextjs-auth0/client";
+import dayjs from "dayjs";
+import customParseFormat from 'dayjs/plugin/customParseFormat';
+
+dayjs.extend(customParseFormat);
 
 const BodyContainer = ({ children }: { children: any }) => (
     <div style={{
@@ -29,11 +34,16 @@ interface BodyPartProps {
     id: number;
     d: string;
     fill: string;
+    onClick: (id: number) => void;
     onMouseEnter: (id: number) => void;
     onMouseLeave: () => void;
 }
 
-const BodyPart = ({ id, d, fill, onMouseEnter, onMouseLeave }: BodyPartProps) => {
+const BodyPart = ({ id, d, fill, onClick, onMouseEnter, onMouseLeave }: BodyPartProps) => {
+    const handleClick = () => {
+        onClick(id);
+    }
+
     const handleMouseEnter = () => {
         onMouseEnter(id);
     }
@@ -46,6 +56,7 @@ const BodyPart = ({ id, d, fill, onMouseEnter, onMouseLeave }: BodyPartProps) =>
         <path
             d={d}
             id={id.toString()}
+            onClick={handleClick}
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
             style={{
@@ -59,6 +70,7 @@ const BodyPart = ({ id, d, fill, onMouseEnter, onMouseLeave }: BodyPartProps) =>
 
 const Page = ({ params }: { params: any }) => {
     const { id } = params;
+    const { user } = useUser();
 
     const {
         data,
@@ -68,13 +80,20 @@ const Page = ({ params }: { params: any }) => {
         variables: { reportId: id },
     });
 
+    const [selectedParts, setSelectedParts] = useState<{ id: number; name: string; description: string }[]>([]);
     const [selectedPartsId, setSelectedPartsId] = useState<number[]>([]);
     const [hovered, setHovered] = useState<number | null>(null);
+    const [isEditing, setIsEditing] = useState(false);
 
     useEffect(() => {
         if (data && data.report && data.report.injuries) {
             const selectedPartsId = data.report.injuries.map((injury: any) => Number(injury.body_part_id));
             setSelectedPartsId(selectedPartsId);
+            setSelectedParts(data.report.injuries.map((injury: any) => ({
+                id: Number(injury.body_part_id),
+                name: injury.body_part,
+                description: injury.description
+            })));
         }
     }, [data]);
 
@@ -96,14 +115,46 @@ const Page = ({ params }: { params: any }) => {
         setHovered(null);
     };
 
+    const handleClick = (id: number) => {
+        if (!isEditing) return;
+        const bodyPart = getBodyPart().find(part => part.id === id);
+        if (!bodyPart) return;
+
+        const index = selectedParts.findIndex(part => part.id === id);
+        if (index !== -1) {
+            setSelectedParts(prevSelected => prevSelected.filter(part => part.id !== id)); // Deselect if already selected
+            setSelectedPartsId(prevSelected => prevSelected.filter(partId => partId !== id));
+        } else {
+            setSelectedParts(prevSelected => [...prevSelected, { id, name: bodyPart.name, description: "" }]); // Select if not already selected
+            setSelectedPartsId(prevSelected => [...prevSelected, id]);
+        }
+    };
+
+    const handleDescriptionChange = (id: number, description: string) => {
+        setSelectedParts(prevSelected =>
+            prevSelected.map(part =>
+                part.id === id ? { ...part, description } : part
+            )
+        );
+    }
+
+    const handleRemove = (id: number) => {
+        setSelectedParts(prevSelected => prevSelected.filter(part => part.id !== id));
+        setSelectedPartsId(prevSelected => prevSelected.filter(partId => partId !== id));
+    }
+
     const getFill = useCallback((bodyPartId: number) => {
-        if (selectedPartsId.includes(bodyPartId)) {
+        if (selectedParts.some(part => part.id === bodyPartId)) {
             return "#054145"; // Fill color for selected parts
         } else if (hovered === bodyPartId) {
             return "grey"; // Fill color for hovered parts
         }
         return "#A5D8CC"; // Default fill color
-    }, [data, hovered]);
+    }, [selectedParts, hovered]);
+
+    const onUpdate = () => {
+        console.log(selectedParts);
+    }
 
     if (loading) {
         return <div>Loading...</div>;
@@ -120,6 +171,13 @@ const Page = ({ params }: { params: any }) => {
                 <h2 className="text-3xl sm:text-4xl md:text-4xl flex items-center justify-center font-bold leading-tight mt-10 text-[#054145]">
                     Body Map Report -  {id}
                 </h2>
+                <div className="flex justify-end">
+                    <button onClick={() => setIsEditing(!isEditing)}
+                        className="bg-[#054145] text-white py-2 px-4 rounded-md shadow-md hover:bg-[#E0fefe] hover:text-black"
+                    >
+                        {isEditing ? "Cancel Edit" : "Edit"}
+                    </button>
+                </div>
                 <div className="flex flex-col md:flex-row w-full items-center justify-center gap-20 mt-20">
                     <div className="flex flex-col items-center justify-center">
                         <p>Anterior side</p>
@@ -130,6 +188,7 @@ const Page = ({ params }: { params: any }) => {
                                     id={bodyPart.id}
                                     d={bodyPart.d}
                                     fill={getFill(bodyPart.id)}
+                                    onClick={handleClick}
                                     onMouseEnter={handleMouseEnter}
                                     onMouseLeave={handleMouseLeave}
                                 />
@@ -145,6 +204,7 @@ const Page = ({ params }: { params: any }) => {
                                     id={bodyPart.id}
                                     d={bodyPart.d}
                                     fill={getFill(bodyPart.id)}
+                                    onClick={handleClick}
                                     onMouseEnter={handleMouseEnter}
                                     onMouseLeave={handleMouseLeave}
                                 />
@@ -153,20 +213,21 @@ const Page = ({ params }: { params: any }) => {
                     </div>
                 </div>
                 <div className="text-black">
-                    {data.report?.injuries.length > 0 ? (
+                    {selectedParts.length > 0 ? (
                         <div className="md:grid md:grid-cols-3 flex flex-col gap-4 items-center justify-center w-full pb-10">
-                            {data.report.injuries.map((injury: any, index: number) => (
+                            {selectedParts.map((parts, index) => (
                                 <div key={index} className="relative text-[#054145]">
                                     <Card
-                                        title={`ID : ${injury.body_part_id} - ${injury.body_part}`}
+                                        title={`ID : ${parts.id} - ${parts.name}`}
                                         style={{ width: 300 }}
-                                        extra={<CloseOutlined />}
+                                        extra={isEditing ? <CloseOutlined onClick={() => handleRemove(parts.id)} /> : null}
                                     >
                                         <TextArea
                                             rows={2}
                                             placeholder="Description"
-                                            value={injury.description}
-                                            readOnly
+                                            value={parts.description}
+                                            onChange={(e) => handleDescriptionChange(parts.id, e.target.value)}
+                                            readOnly={!isEditing}
                                         />
                                     </Card>
                                 </div>
@@ -176,8 +237,18 @@ const Page = ({ params }: { params: any }) => {
                         <p className="flex flex-col items-center justify-center text-2xl font-semibold pb-10 text-[#054145]">Click on the body!</p>
                     )}
                 </div>
+                {isEditing && (
+                    <div className="flex flex-col items-center justify-center py-10 px-auto">
+                        <button onClick={onUpdate}
+                            className="bg-[#054145] text-white py-2 px-10 rounded-md shadow-md hover:bg-[#E0fefe] hover:text-black"
+                        >
+                            Update
+                        </button>
+                    </div>
+                )}
             </div>
         </>
+
     );
 };
 
