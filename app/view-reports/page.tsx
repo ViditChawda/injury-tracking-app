@@ -2,7 +2,7 @@
 import NavBar from '../../components/nav-bar'
 import { GET_REPORTS } from '../../graphql/queries'
 import { useMutation, useQuery } from '@apollo/client'
-import { Card, Input, DatePicker, Table } from 'antd'
+import { Card, Input, DatePicker, Table, Popconfirm } from 'antd'
 import { format } from 'date-fns'
 import { LoaderCircle } from 'lucide-react'
 import { useRouter } from 'next/navigation'
@@ -13,21 +13,21 @@ import { DELETE_REPORT } from '@/graphql/mutations'
 const { RangePicker } = DatePicker;
 
 function ViewReports() {
-    const { data, loading } = useQuery(GET_REPORTS);
+    const { data, loading } = useQuery(GET_REPORTS, { fetchPolicy: "no-cache" });
     const router = useRouter();
     const [isClient, setIsClient] = useState(false);
     const [searchText, setSearchText] = useState('');
     const [filteredReports, setFilteredReports] = useState([]);
 
-    const [deleteReport, { error: mutationError }] = useMutation(DELETE_REPORT);
+    const [deleteReport, { error: mutationError }] = useMutation(DELETE_REPORT, { refetchQueries: [GET_REPORTS] });
 
     const handleDelete = async (id: any) => {
         try {
+            console.log(id)
             const { data } = await deleteReport({ variables: { id } });
-            console.log("Deleted Report:", data.deleteReport);
-            // Handle any post-deletion actions (e.g., redirect, update state)
+            console.log("Deleted Report -", data.deleteReport);
         } catch (error) {
-            console.error("Error deleting report:", error);
+            console.error("Error deleting reprot ", error);
         }
     };
 
@@ -100,7 +100,15 @@ function ViewReports() {
             key: 'x',
             render: (_: any, record: any) => (
                 <div className='text-blue-500'>
-                    <a onClick={() => handleDelete(record.id)}>Delete</a>
+                    <Popconfirm
+                        placement="topLeft"
+                        title={'Are you sure to delete this report?'}
+                        description={'Delete the report'}
+                        okText="Yes"
+                        cancelText="No"
+                        onConfirm={() => handleDelete(record.id)}
+                    >
+                        <a >Delete</a></Popconfirm>
                     <a onClick={() => { router.push(`/view-reports/${record.id}`) }} className='ml-6'>View/Edit</a>
                 </div>
             ),

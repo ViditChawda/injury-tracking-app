@@ -55,6 +55,6 @@ export const typeDefs = gql`
   type Mutation {
     createReport(input: ReportCreateInput!): Report
     updateReport(input: ReportUpdateInput!): Report
-     deleteReport(id: ID!): Report
+    deleteReport(id: ID!): Report
   }
 `;

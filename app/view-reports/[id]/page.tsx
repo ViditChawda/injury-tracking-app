@@ -14,8 +14,6 @@ import { useMutation } from "@apollo/client";
 import { UPDATE_REPORT } from "../../../graphql/mutations";
 import { message } from 'antd';
 
-
-
 dayjs.extend(customParseFormat);
 
 const BodyContainer = ({ children }: { children: any }) => (
@@ -133,10 +131,10 @@ const Page = ({ params }: { params: any }) => {
 
         const index = selectedParts.findIndex(part => part.id === id);
         if (index !== -1) {
-            setSelectedParts(prevSelected => prevSelected.filter(part => part.id !== id)); // Deselect if already selected
+            setSelectedParts(prevSelected => prevSelected.filter(part => part.id !== id));
             setSelectedPartsId(prevSelected => prevSelected.filter(partId => partId !== id));
         } else {
-            setSelectedParts(prevSelected => [...prevSelected, { id, name: bodyPart.name, description: "" }]); // Select if not already selected
+            setSelectedParts(prevSelected => [...prevSelected, { id, name: bodyPart.name, description: "" }]);
             setSelectedPartsId(prevSelected => [...prevSelected, id]);
         }
     };
@@ -156,11 +154,11 @@ const Page = ({ params }: { params: any }) => {
 
     const getFill = useCallback((bodyPartId: number) => {
         if (selectedParts.some(part => part.id === bodyPartId)) {
-            return "#054145"; // Fill color for selected parts
+            return "#054145";
         } else if (hovered === bodyPartId) {
-            return "grey"; // Fill color for hovered parts
+            return "grey";
         }
-        return "#A5D8CC"; // Default fill color
+        return "#A5D8CC";
     }, [selectedParts, hovered]);
 
     const onUpdate = async () => {

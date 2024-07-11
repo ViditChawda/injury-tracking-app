@@ -30,7 +30,7 @@ model Report {
 
 model Injury {
   injury_id    Int    @id @default(autoincrement())
-  report       Report @relation(fields: [report_id], references: [id])
+  report       Report @relation(fields: [report_id], references: [id], onDelete: Cascade)
   report_id    Int
   body_part_id String
   body_part    String

@@ -66,8 +66,8 @@ const resolvers = {
             date: date || undefined,
             time: time || undefined,
             injuries: {
-              deleteMany: {}, // Remove existing injuries
-              create: injuries, // Add new injuries
+              deleteMany: {},
+              create: injuries,
             },
           },
           include: {
@@ -83,6 +83,7 @@ const resolvers = {
     },
     deleteReport: async (_: any, { id }: { id: any }) => {
       try {
+        console.log(id)
         const deletedReport = await prisma.report.delete({
           where: { id: Number(id) },
         });
