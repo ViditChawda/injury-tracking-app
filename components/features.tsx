@@ -1,9 +1,10 @@
 import { useUser } from '@auth0/nextjs-auth0/client';
+import { useRouter } from 'next/navigation';
 import React from 'react';
 
 const FeaturesSection = () => {
     const { user, error, isLoading } = useUser();
-
+    const router = useRouter()
     return (
         <section id='features' className="bg-[#F0F4F7] py-20 px-4 sm:px-6 lg:px-8 pb-40">
             <div className="max-w-7xl mx-auto">
@@ -21,7 +22,7 @@ const FeaturesSection = () => {
                                 <a href="/api/auth/login">Login / Sign Up</a>
                             </button>
                         ) : (
-                            <button className="bg-[#A5D8CC] text-white py-2 px-6 rounded-md shadow-md hover:bg-[#054145] hover:text-white transition duration-300 ease-in-out">
+                            <button onClick={() => { router.push('/view-reports') }} className="bg-[#A5D8CC] text-white py-2 px-6 rounded-md shadow-md hover:bg-[#054145] hover:text-white transition duration-300 ease-in-out">
                                 Manage Reports
                             </button>
                         )}
@@ -36,7 +37,7 @@ const FeaturesSection = () => {
                                 <a href="/api/auth/login">Login / Sign Up</a>
                             </button>
                         ) : (
-                            <button className="bg-[#A5D8CC] text-white py-2 px-6 rounded-md shadow-md hover:bg-[#054145] hover:text-white transition duration-300 ease-in-out">
+                            <button onClick={() => { router.push('/create-injury') }} className="bg-[#A5D8CC] text-white py-2 px-6 rounded-md shadow-md hover:bg-[#054145] hover:text-white transition duration-300 ease-in-out">
                                 Use Body Map
                             </button>
                         )}
@@ -51,7 +52,7 @@ const FeaturesSection = () => {
                                 <a href="/api/auth/login">Login / Sign Up</a>
                             </button>
                         ) : (
-                            <button className="bg-[#A5D8CC] text-white py-2 px-6 rounded-md shadow-md hover:bg-[#054145] hover:text-white transition duration-300 ease-in-out">
+                            <button onClick={() => { router.push('/view-reports') }} className="bg-[#A5D8CC] text-white py-2 px-6 rounded-md shadow-md hover:bg-[#054145] hover:text-white transition duration-300 ease-in-out">
                                 View Reports
                             </button>
                         )}
@@ -66,7 +67,7 @@ const FeaturesSection = () => {
                                 <a href="/api/auth/login">Login / Sign Up</a>
                             </button>
                         ) : (
-                            <button className="bg-[#A5D8CC] text-white py-2 px-6 rounded-md shadow-md hover:bg-[#054145] hover:text-white transition duration-300 ease-in-out">
+                            <button onClick={() => { router.push('/') }} className="bg-[#A5D8CC] text-white py-2 px-6 rounded-md shadow-md hover:bg-[#054145] hover:text-white transition duration-300 ease-in-out">
                                 Manage Account
                             </button>
                         )}
