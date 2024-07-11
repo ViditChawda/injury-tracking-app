@@ -137,7 +137,8 @@ function ViewReports() {
                                     cancelText="No"
                                     onConfirm={() => handleDelete(report.id)}
                                 >
-                                    <a >Delete</a></Popconfirm>
+                                    <a >Delete</a>
+                                </Popconfirm>
                                 <a onClick={() => { router.push(`/view-reports/${report.id}`) }} className='ml-6'>View/Edit</a>
                             </div>
                         </Card>

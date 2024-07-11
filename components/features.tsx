@@ -18,7 +18,7 @@ const FeaturesSection = () => {
                         </p>
                         {!user ? (
                             <button className="bg-[#A5D8CC] text-white py-2 px-6 rounded-md shadow-md hover:bg-[#054145] hover:text-white transition duration-300 ease-in-out">
-                                Login / Sign Up
+                                <a href="/api/auth/login">Login / Sign Up</a>
                             </button>
                         ) : (
                             <button className="bg-[#A5D8CC] text-white py-2 px-6 rounded-md shadow-md hover:bg-[#054145] hover:text-white transition duration-300 ease-in-out">
@@ -33,7 +33,7 @@ const FeaturesSection = () => {
                         </p>
                         {!user ? (
                             <button className="bg-[#A5D8CC] text-white py-2 px-6 rounded-md shadow-md hover:bg-[#054145] hover:text-white transition duration-300 ease-in-out">
-                                Login / Sign Up
+                                <a href="/api/auth/login">Login / Sign Up</a>
                             </button>
                         ) : (
                             <button className="bg-[#A5D8CC] text-white py-2 px-6 rounded-md shadow-md hover:bg-[#054145] hover:text-white transition duration-300 ease-in-out">
@@ -48,7 +48,7 @@ const FeaturesSection = () => {
                         </p>
                         {!user ? (
                             <button className="bg-[#A5D8CC] text-white py-2 px-6 rounded-md shadow-md hover:bg-[#054145] hover:text-white transition duration-300 ease-in-out">
-                                Login / Sign Up
+                                <a href="/api/auth/login">Login / Sign Up</a>
                             </button>
                         ) : (
                             <button className="bg-[#A5D8CC] text-white py-2 px-6 rounded-md shadow-md hover:bg-[#054145] hover:text-white transition duration-300 ease-in-out">
@@ -63,7 +63,7 @@ const FeaturesSection = () => {
                         </p>
                         {!user ? (
                             <button className="bg-[#A5D8CC] text-white py-2 px-6 rounded-md shadow-md hover:bg-[#054145] hover:text-white transition duration-300 ease-in-out">
-                                Login / Sign Up
+                                <a href="/api/auth/login">Login / Sign Up</a>
                             </button>
                         ) : (
                             <button className="bg-[#A5D8CC] text-white py-2 px-6 rounded-md shadow-md hover:bg-[#054145] hover:text-white transition duration-300 ease-in-out">

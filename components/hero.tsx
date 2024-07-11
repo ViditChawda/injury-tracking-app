@@ -1,8 +1,10 @@
 import { useUser } from '@auth0/nextjs-auth0/client';
+import { useRouter } from 'next/navigation';
 import React from 'react';
 
 const Hero = () => {
     const { user, error, isLoading } = useUser();
+    const router = useRouter()
     return (
         <section className="hero container bg-[#A5D8CC] text-white py-20 md:pt-40 min-h-[70vh]">
             <div className="max-w-7xl mx-auto">
@@ -15,7 +17,7 @@ const Hero = () => {
                 {!user ?
                     <div className="flex space-x-4">
                         <button className="bg-[#E0fefe] text-[#054145] py-2 px-6 rounded-md shadow-md hover:bg-[#054145] hover:text-white transition duration-300 ease-in-out">
-                            Login / Sign Up
+                            <a href="/api/auth/login">Login / Sign Up</a>
                         </button>
                         <button className="bg-[#E0fefe] text-[#054145] py-2 px-6 rounded-md shadow-md hover:bg-[#054145] hover:text-white transition duration-300 ease-in-out">
                             Learn More
@@ -23,7 +25,7 @@ const Hero = () => {
                     </div>
                     :
                     <div>
-                        <button className="bg-[#E0fefe] text-[#054145] py-2 px-6 rounded-md shadow-md hover:bg-[#054145] hover:text-white transition duration-300 ease-in-out">
+                        <button onClick={() => { router.push('/view-reports') }} className="bg-[#E0fefe] text-[#054145] py-2 px-6 rounded-md shadow-md hover:bg-[#054145] hover:text-white transition duration-300 ease-in-out">
                             Reports
                         </button>
                     </div>
