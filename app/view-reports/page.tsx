@@ -83,7 +83,7 @@ function ViewReports() {
             render: (_: any, record: any) => (
                 <div className='text-blue-500'>
                     <a>Delete</a>
-                    <a onClick={() => { router.push(`/view-reports/${record.id}`) }} className='ml-6'>View</a>
+                    <a onClick={() => { router.push(`/view-reports/${record.id}`) }} className='ml-6'>View/Edit</a>
                 </div>
             ),
         },
