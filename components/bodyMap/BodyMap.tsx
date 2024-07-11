@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from "react";
 import { getBodyPart } from "./bodyParts";
-import { Card, Input, DatePicker, TimePicker } from "antd";
+import { Card, Input, DatePicker, TimePicker, message } from "antd";
 import TextArea from "antd/es/input/TextArea";
 import { CloseOutlined } from "@ant-design/icons";
 import { useUser } from "@auth0/nextjs-auth0/client";
@@ -157,6 +157,7 @@ export const BodyMap = () => {
                 }
             });
             router.push('/view-reports')
+            message.success('Report created successfully!', 3);
         } catch (err) {
             console.log(error)
         }
