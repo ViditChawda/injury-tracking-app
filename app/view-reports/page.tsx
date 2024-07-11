@@ -1,13 +1,14 @@
 'use client'
 import NavBar from '../../components/nav-bar'
-import { GET_REPORTS } from '../../graphql/queries'
-import { useQuery } from '@apollo/client'
+import { GET_REPORT_BY_ID, GET_REPORTS } from '../../graphql/queries'
+import { useMutation, useQuery } from '@apollo/client'
 import { Card, Input, DatePicker, Table } from 'antd'
 import { format } from 'date-fns'
 import { LoaderCircle } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 import { SearchOutlined } from '@ant-design/icons'
+import { DELETE_REPORT } from '@/graphql/mutations'
 
 const { RangePicker } = DatePicker;
 
@@ -17,6 +18,19 @@ function ViewReports() {
     const [isClient, setIsClient] = useState(false);
     const [searchText, setSearchText] = useState('');
     const [filteredReports, setFilteredReports] = useState([]);
+
+
+    const [deleteReport, { error: mutationError }] = useMutation(DELETE_REPORT);
+
+    const handleDelete = async (id: any) => {
+        try {
+            const { data } = await deleteReport({ variables: { id } });
+            console.log("Deleted Report:", data.deleteReport);
+            // Handle any post-deletion actions (e.g., redirect, update state)
+        } catch (error) {
+            console.error("Error deleting report:", error);
+        }
+    };
 
     useEffect(() => {
         setIsClient(true);
@@ -82,7 +96,7 @@ function ViewReports() {
             key: 'x',
             render: (_: any, record: any) => (
                 <div className='text-blue-500'>
-                    <a>Delete</a>
+                    <a onClick={() => handleDelete(record.id)}>Delete</a>
                     <a onClick={() => { router.push(`/view-reports/${record.id}`) }} className='ml-6'>View/Edit</a>
                 </div>
             ),

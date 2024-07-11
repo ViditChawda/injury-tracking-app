@@ -10,6 +10,9 @@ import NavBar from "../../../components/nav-bar";
 import { useUser } from "@auth0/nextjs-auth0/client";
 import dayjs from "dayjs";
 import customParseFormat from 'dayjs/plugin/customParseFormat';
+import { useMutation } from "@apollo/client";
+import { UPDATE_REPORT } from "../../../graphql/mutations";
+
 
 dayjs.extend(customParseFormat);
 
@@ -72,13 +75,11 @@ const Page = ({ params }: { params: any }) => {
     const { id } = params;
     const { user } = useUser();
 
-    const {
-        data,
-        loading,
-        error: queryError,
-    } = useQuery(GET_REPORT_BY_ID, {
+    const { data, loading, error: queryError } = useQuery(GET_REPORT_BY_ID, {
         variables: { reportId: id },
     });
+
+    const [updateReport, { error: mutationError }] = useMutation(UPDATE_REPORT);
 
     const [selectedParts, setSelectedParts] = useState<{ id: number; name: string; description: string }[]>([]);
     const [selectedPartsId, setSelectedPartsId] = useState<number[]>([]);
@@ -160,16 +161,36 @@ const Page = ({ params }: { params: any }) => {
         return "#A5D8CC"; // Default fill color
     }, [selectedParts, hovered]);
 
-    const onUpdate = () => {
-        console.log(selectedParts);
-    }
+    const onUpdate = async () => {
+        const injuries = selectedParts.map(part => ({
+            description: part.description,
+            body_part: part.name,
+            body_part_id: part.id.toString(),
+        }));
+
+        const input = {
+            id: id,
+            reporter_name: reporterName,
+            report_name: reportName,
+            date: reportDate.format("YYYY-MM-DD"),
+            time: reportTime.format("HH:mm:ss"),
+            injuries: injuries,
+        };
+
+        try {
+            const { data } = await updateReport({ variables: { input } });
+            console.log("Updated Report:", data.updateReport);
+        } catch (error) {
+            console.error("Error updating report:", error);
+        }
+    };
 
     if (loading) {
-        return <div>Loading...</div>;
+        return <p>Loading...</p>;
     }
 
     if (queryError) {
-        return <div>Error: {queryError.message}</div>;
+        return <p>Error: {queryError.message}</p>;
     }
 
     return (
@@ -179,90 +200,87 @@ const Page = ({ params }: { params: any }) => {
                 <h2 className="text-3xl sm:text-4xl md:text-4xl flex items-center justify-center font-bold leading-tight mt-10 text-[#054145]">
                     Body Map Report -  {id}
                 </h2>
-                <div className="flex justify-center pt-10 md:justify-end mb-4">
+                <div className="flex justify-end mb-4">
                     <button onClick={() => setIsEditing(!isEditing)}
-                        className="bg-[#054145] text-white py-2 px-4 w-40 rounded-md shadow-md hover:bg-[#E0fefe] hover:text-black"
+                        className="bg-[#054145] text-white py-2 px-4 rounded-md shadow-md hover:bg-[#E0fefe] hover:text-black"
                     >
                         {isEditing ? "Cancel Edit" : "Edit"}
                     </button>
                 </div>
-                <div className="flex md:flex-row flex-col md:mt-0 mt-6 container md:px-0">
-                    <div className="flex flex-col gap-2 items-start justify-center">
-                        <div className="w-full ">
-                            <label>Report Name : </label>
-                            <Input
-                                className="mb-4 w-full mt-2"
-                                placeholder="Report Name"
-                                value={reportName}
-                                onChange={(e) => setReportName(e.target.value)}
-                                disabled={!isEditing}
-                            />
-                        </div>
-                        <div className="w-full ">
-                            <label>Reporter Name : </label>
-                            <Input
-                                className="mb-4 w-full mt-2"
-                                placeholder="Reporter Name"
-                                value={reporterName}
-                                onChange={(e) => setReporterName(e.target.value)}
-                                disabled={!isEditing}
-                            />
-                        </div>
-                        <div className="w-full ">
-                            <label>Report Date : </label>
-                            <DatePicker
-                                className="mb-4 w-full mt-2"
-                                value={reportDate}
-                                onChange={(date) => setReportDate(date ?? dayjs())}
-                                disabled={!isEditing}
-                            />
-                        </div>
-                        <div className="w-full ">
-                            <label>Report Time : </label>
-                            <TimePicker
-                                className="mb-4 w-full mt-2"
-                                value={reportTime}
-                                onChange={(time) => setReportTime(time ?? dayjs())}
-                                disabled={!isEditing}
-                            />
-                        </div>
+                <div className="flex flex-col md:flex-row gap-4">
+                    <div className="w-full md:w-1/2">
+                        <label>Report Name : </label>
+                        <Input
+                            className="mb-4 w-full mt-2"
+                            placeholder="Report Name"
+                            value={reportName}
+                            onChange={(e) => setReportName(e.target.value)}
+                            disabled={!isEditing}
+                        />
                     </div>
-                    <div className="flex flex-col md:flex-row w-full items-center justify-center gap-20 mt-10">
-                        <div className="flex flex-col items-center justify-center">
-                            <p>Anterior side</p>
-                            <BodyContainer>
-                                {antBodyParts.map((bodyPart, index) => (
-                                    <BodyPart
-                                        key={index}
-                                        id={bodyPart.id}
-                                        d={bodyPart.d}
-                                        fill={getFill(bodyPart.id)}
-                                        onClick={handleClick}
-                                        onMouseEnter={handleMouseEnter}
-                                        onMouseLeave={handleMouseLeave}
-                                    />
-                                ))}
-                            </BodyContainer>
-                        </div>
-                        <div className="flex flex-col items-center justify-center">
-                            <p>Posterior side</p>
-                            <BodyContainer>
-                                {postBodyParts.map((bodyPart, index) => (
-                                    <BodyPart
-                                        key={index}
-                                        id={bodyPart.id}
-                                        d={bodyPart.d}
-                                        fill={getFill(bodyPart.id)}
-                                        onClick={handleClick}
-                                        onMouseEnter={handleMouseEnter}
-                                        onMouseLeave={handleMouseLeave}
-                                    />
-                                ))}
-                            </BodyContainer>
-                        </div>
+                    <div className="w-full md:w-1/2">
+                        <label>Reporter Name : </label>
+                        <Input
+                            className="mb-4 w-full mt-2"
+                            placeholder="Reporter Name"
+                            value={reporterName}
+                            onChange={(e) => setReporterName(e.target.value)}
+                            disabled={!isEditing}
+                        />
+                    </div>
+                    <div className="w-full md:w-1/2">
+                        <label>Report Date : </label>
+                        <DatePicker
+                            className="mb-4 w-full mt-2"
+                            value={reportDate}
+                            onChange={(date) => setReportDate(date ?? dayjs())}
+                            disabled={!isEditing}
+                        />
+                    </div>
+                    <div className="w-full md:w-1/2">
+                        <label>Report Time : </label>
+                        <TimePicker
+                            className="mb-4 w-full mt-2"
+                            value={reportTime}
+                            onChange={(time) => setReportTime(time ?? dayjs())}
+                            disabled={!isEditing}
+                        />
                     </div>
                 </div>
-
+                <div className="flex flex-col md:flex-row w-full items-center justify-center gap-20 mt-10">
+                    <div className="flex flex-col items-center justify-center">
+                        <p>Anterior side</p>
+                        <BodyContainer>
+                            {antBodyParts.map((bodyPart, index) => (
+                                <BodyPart
+                                    key={index}
+                                    id={bodyPart.id}
+                                    d={bodyPart.d}
+                                    fill={getFill(bodyPart.id)}
+                                    onClick={handleClick}
+                                    onMouseEnter={handleMouseEnter}
+                                    onMouseLeave={handleMouseLeave}
+                                />
+                            ))}
+                        </BodyContainer>
+                    </div>
+                    <div className="flex flex-col items-center justify-center">
+                        <p>Posterior side</p>
+                        <BodyContainer>
+                            {postBodyParts.map((bodyPart, index) => (
+                                <BodyPart
+                                    key={index}
+                                    id={bodyPart.id}
+                                    d={bodyPart.d}
+                                    fill={getFill(bodyPart.id)}
+                                    onClick={handleClick}
+                                    onMouseEnter={handleMouseEnter}
+                                    onMouseLeave={handleMouseLeave}
+                                />
+                            ))}
+                        </BodyContainer>
+                    </div>
+                </div>
                 <div className="text-black">
                     {selectedParts.length > 0 ? (
                         <div className="md:grid md:grid-cols-3 flex flex-col gap-4 items-center justify-center w-full pb-10">
@@ -291,7 +309,7 @@ const Page = ({ params }: { params: any }) => {
                 {isEditing && (
                     <div className="flex flex-col items-center justify-center py-10 px-auto">
                         <button onClick={onUpdate}
-                            className="bg-[#054145] text-white py-2 px-10 w-40 rounded-md shadow-md hover:bg-[#E0fefe] hover:text-black"
+                            className="bg-[#054145] text-white py-2 px-10 rounded-md shadow-md hover:bg-[#E0fefe] hover:text-black"
                         >
                             Update
                         </button>
@@ -300,6 +318,6 @@ const Page = ({ params }: { params: any }) => {
             </div>
         </>
     );
-}
+};
 
 export default Page;

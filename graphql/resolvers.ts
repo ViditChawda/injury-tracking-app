@@ -1,4 +1,3 @@
-
 import prisma from "../prisma/db";
 
 const resolvers = {
@@ -49,6 +48,48 @@ const resolvers = {
         return createdReport;
       } catch (err) {
         console.log("[ERROR_CREATING_REPORT]", err);
+        return null;
+      }
+    },
+    updateReport: async (_: any, { input }: { input: any }) => {
+      const { id, reporter_name, report_name, date, time, injuries } = input;
+
+      console.log("[Input]", input);
+
+      try {
+        // Update the report
+        const updatedReport = await prisma.report.update({
+          where: { id: Number(id) },
+          data: {
+            reporter_name: reporter_name || undefined,
+            report_name: report_name || undefined,
+            date: date || undefined,
+            time: time || undefined,
+            injuries: {
+              deleteMany: {}, // Remove existing injuries
+              create: injuries, // Add new injuries
+            },
+          },
+          include: {
+            injuries: true,
+          },
+        });
+        console.log(updatedReport);
+        return updatedReport;
+      } catch (err) {
+        console.log("[ERROR_UPDATING_REPORT]", err);
+        return null;
+      }
+    },
+    deleteReport: async (_: any, { id }: { id: any }) => {
+      try {
+        const deletedReport = await prisma.report.delete({
+          where: { id: Number(id) },
+        });
+        console.log("Deleted Report:", deletedReport);
+        return deletedReport;
+      } catch (err) {
+        console.log("[ERROR_DELETING_REPORT]", err);
         return null;
       }
     },
