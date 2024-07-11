@@ -273,7 +273,7 @@ export const BodyMap = () => {
             </div>
             <div className="flex flex-col items-center justify-center py-10 px-auto">
                 {(selectedParts.length > 0) &&
-                    <button disabled={isLoading} onClick={onSubmit}
+                    <button disabled={loading || isLoading} onClick={onSubmit}
                         className="bg-[#054145] text-white py-2 px-10 rounded-md shadow-md hover:bg-[#E0fefe] hover:text-black"
                     >
                         {loading ?
