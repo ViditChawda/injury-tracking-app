@@ -168,6 +168,8 @@ const Page = ({ params }: { params: any }) => {
             body_part_id: part.id.toString(),
         }));
 
+        console.log(id)
+
         const input = {
             id: id,
             reporter_name: reporterName,

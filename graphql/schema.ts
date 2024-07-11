@@ -30,7 +30,6 @@ export const typeDefs = gql`
   }
   
   input InjuryUpdateInput {
-    injury_id: ID!
     description: String
     body_part: String
     body_part_id: String
@@ -56,6 +55,6 @@ export const typeDefs = gql`
   type Mutation {
     createReport(input: ReportCreateInput!): Report
     updateReport(input: ReportUpdateInput!): Report
-    deleteReport(id: ID!): Report
+     deleteReport(id: ID!): Report
   }
 `;
