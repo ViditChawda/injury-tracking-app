@@ -9,6 +9,7 @@ import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 import { SearchOutlined } from '@ant-design/icons'
 import { DELETE_REPORT } from '@/graphql/mutations'
+import { useUser } from '@auth0/nextjs-auth0/client'
 
 const { RangePicker } = DatePicker;
 
@@ -18,7 +19,13 @@ function ViewReports() {
     const [isClient, setIsClient] = useState(false);
     const [searchText, setSearchText] = useState('');
     const [filteredReports, setFilteredReports] = useState([]);
+    const { user, error, isLoading } = useUser()
 
+    useEffect(() => {
+        if (!user) {
+            router.push('/')
+        }
+    })
     const [deleteReport, { error: mutationError }] = useMutation(DELETE_REPORT, { refetchQueries: [GET_REPORTS] });
 
     const handleDelete = async (id: any) => {
